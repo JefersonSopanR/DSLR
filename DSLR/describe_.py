@@ -1,5 +1,5 @@
-import csv
 import numpy
+from .core import getNumPyArray
 
 def describe(filename):
     data = getNumPyArray(filename)
@@ -61,28 +61,6 @@ def print_(label, list):
         except:
             print(f'{str(value):>10.10}', end=' | ')
     print()
-        
-    
-
-def getNumPyArray(filename):
-    datalist = list()
-
-    try:
-        with open(filename) as csvfile:
-            reader = csv.reader(csvfile)
-            for _ in reader:
-                row = list()
-                for value in _:
-                    try:
-                        value = float(value)
-                    except:
-                        if not value:
-                            value = numpy.nan
-                    row.append(value)
-                datalist.append(row)
-    except:
-        print(f"Error opening tye file: {filename}")
-    return numpy.array(datalist, dtype=object)
 
 def count_(values):
     try:
@@ -140,3 +118,13 @@ def percentil_(percentil, value):
     i1 = value[int(floor)] * (ceiling - index)
 
     return i0 + i1
+
+def var_(values):
+    values = values.astype('float')
+    values = values[~numpy.isnan(values)]
+    mean = mean_(values)
+    total = 0
+    for num in values:
+        total = total + (num - mean) ** 2
+    return total / len(values)
+
