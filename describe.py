@@ -1,5 +1,5 @@
 import argparse
-from DSLR.core import describe
+from DSLR.describe_ import describe
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
