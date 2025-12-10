@@ -98,7 +98,6 @@ def max_(values):
 
 def stdDev_(values):
     mean = mean_(values)
-
     variance = 0
     for v in values:
         diff = v - mean
