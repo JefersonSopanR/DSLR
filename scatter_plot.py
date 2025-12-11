@@ -33,9 +33,9 @@ def find_most_similar_features(data):
     
     # Test all pairs of numeric columns (6-18)
     for i in range(6, data.shape[1]):
+        X = numpy.array(data[:, i], dtype=float)
         for j in range(i + 1, data.shape[1]):  # Only test each pair once
             try:
-                X = numpy.array(data[:, i], dtype=float)
                 y = numpy.array(data[:, j], dtype=float)
           
                 # Remove rows where either value is NaN
@@ -62,11 +62,6 @@ def find_most_similar_features(data):
 if __name__ == "__main__":
     data = getNumPyArray('dataset_train.csv')
     data = data[1:, :]
-    n_data = [80.0,     85.0,     90.0]
-    new_data = numpy.array(n_data, dtype=float)
-    std = stdDev_(new_data)
-    mean = mean_(new_data)
-    var = var_(new_data)
     col1, col2 = find_most_similar_features(data)
     print(f'col1 --> {col1}')
     print(f'col2 --> {col2}')
