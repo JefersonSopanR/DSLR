@@ -1,6 +1,6 @@
-from DSLR.core import getNumPyArray
+from Helpers.core import getNumPyArray
 import numpy
-from DSLR.describe_ import stdDev_, var_
+from Helpers.describe_ import stdDev_, var_
 import matplotlib.pyplot as plt
 
 def find_best_col(data):

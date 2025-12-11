@@ -1,67 +1,68 @@
-from DSLR.describe_ import stdDev_, mean_, var_
+from DSLR.describe_ import stdDev_, mean_
 from DSLR.core import getNumPyArray
 import numpy
+import matplotlib.pyplot as plt
 
-def correlation_(X, y):
-    """Calculate Pearson correlation coefficient between X and y."""
-    
-    # Remove NaN values
-    mask = ~(numpy.isnan(X) | numpy.isnan(y))
+def correlation_(values_x, values_y):
+    mean_x = mean_(values_x)
+    mean_y = mean_(values_y)
+    std_x = stdDev_(values_x)
+    std_y = stdDev_(values_y)
+    n = len(values_x) # This is the same as -> len(values_y)
 
-    X = X[mask]
-    y = y[mask]
-    
-    if len(X) == 0:
-        return 0
-    
-    mean_x = mean_(X)
-    mean_y = mean_(y)
-    std_x = stdDev_(X)
-    std_y = stdDev_(y)
-    
-    # Calculate correlation
-    n = len(X)
-    numerator = sum((X[i] - mean_x) * (y[i] - mean_y) for i in range(n))
+    numerator = sum(((values_x[i] - mean_x) * (values_y[i] - mean_y)) for i in range(n))
     denominator = n * std_x * std_y
-    
-    return numerator / denominator if denominator != 0 else 0
 
-def find_most_similar_features(data):
-    """Find the two most correlated features."""
+    if denominator == 0:
+        return 0
+    return numerator / denominator
+
+def find_best_correlations(data):
+    best_pairs = (None, None)
     max_correlation = -1
-    best_pair = (None, None)
-    
-    # Test all pairs of numeric columns (6-18)
+
     for i in range(6, data.shape[1]):
-        X = numpy.array(data[:, i], dtype=float)
-        for j in range(i + 1, data.shape[1]):  # Only test each pair once
-            try:
+        try:
+            X = numpy.array(data[:, i], dtype=float)
+            for j in range(i + 1, data.shape[1]):
                 y = numpy.array(data[:, j], dtype=float)
-          
-                # Remove rows where either value is NaN
-                mask = ~(numpy.isnan(X) | numpy.isnan(y))
-                X_clean = X[mask]
-                y_clean = y[mask]
-                
-                if len(X_clean) > 0:
-                    # Calculate correlation coefficient
-                    correlation = correlation_(X_clean, y_clean)
+
+                valid_values = ~(numpy.isnan(X) | numpy.isnan(y))
+                X_valid = X[valid_values]
+                y_valid = y[valid_values]
+                if len(X_valid) > 0:
+                    correlation = correlation_(X_valid, y_valid)
                     
-                    # Track highest correlation
                     if abs(correlation) > max_correlation:
-                        print(f'correlation->> {abs(correlation):12.4f}', end=' | ')
                         max_correlation = abs(correlation)
-                        best_pair = (i, j)
-                        print(f'best pair ->> {best_pair}')
-                        
-            except:
-                continue
-    
-    return best_pair
+                        best_pairs = (i, j)
+        except:
+            continue
+    return best_pairs, max_correlation
 
 if __name__ == "__main__":
     data = getNumPyArray('dataset_train.csv')
+    headers = data[0]
     data = data[1:, :]
-    col1, col2 = find_most_similar_features(data)
-    print(f'col1 --> {col1}')
-    print(f'col2 --> {col2}')
+    data = data[data[:, 1].argsort()]
+
+    (col1, col2), max_corr = find_best_correlations(data)
+
+    X = numpy.array(data[:, col1], dtype=float)
+    y = numpy.array(data[:, 9], dtype=float)
+
+    valid_values = ~(numpy.isnan(X) | numpy.isnan(y))
+
+    X_clean = X[valid_values]
+    y_clean = y[valid_values]
+
+    # Create scatter plot
+    plt.figure(figsize=(10, 6))
+    plt.scatter(X_clean, y_clean, alpha=0.5, s=30)
+    
+    plt.xlabel(headers[col1])
+    plt.ylabel(headers[col2])
+    plt.title(f'Scatter Plot: {headers[col1]} vs {headers[col2]}\nCorrelation: {max_corr:.4f}')
+    plt.grid(True, alpha=0.3)
+    
+    plt.show()
