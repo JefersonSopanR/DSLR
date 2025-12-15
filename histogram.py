@@ -25,6 +25,8 @@ def find_best_col(data):
                 house_data = house_data[~numpy.isnan(house_data)]
                 if len(house_data) > 0:
                     stds.append(stdDev_(house_data))
+                else:
+                    raise Exception()
             var = var_(numpy.array(stds, dtype=float))
             if var < min_variance:
                 min_variance = var
@@ -46,13 +48,6 @@ if __name__ == '__main__':
     best_col = find_best_col(data)
     print(best_col)
     houses = numpy.unique(data[:, 1])
-    color_houses = {
-        'Gryffindor': 'red',
-        'Hufflepuff': 'yellow',
-        'Ravenclaw': 'blue',
-        'Slytherin': 'green'
-    }
-    
     # Plot histogram for each house
     # this creates a blank canvas figsize(x, y)
     plt.figure(figsize=(10, 6))

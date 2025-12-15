@@ -1,5 +1,5 @@
-from DSLR.describe_ import stdDev_, mean_
-from DSLR.core import getNumPyArray
+from Helpers.describe_ import stdDev_, mean_
+from Helpers.core import getNumPyArray
 import numpy
 import matplotlib.pyplot as plt
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     (col1, col2), max_corr = find_best_correlations(data)
 
     X = numpy.array(data[:, col1], dtype=float)
-    y = numpy.array(data[:, 9], dtype=float)
+    y = numpy.array(data[:, col2], dtype=float)
 
     valid_values = ~(numpy.isnan(X) | numpy.isnan(y))
 

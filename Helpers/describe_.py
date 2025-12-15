@@ -124,6 +124,7 @@ def var_(values):
     mean = mean_(values)
     total = 0
     for num in values:
-        total = total + (num - mean) ** 2
+        diff = num - mean
+        total = diff ** 2
     return total / len(values)
 
