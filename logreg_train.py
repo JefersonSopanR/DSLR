@@ -47,8 +47,3 @@ if __name__ == '__main__':
 
     y_train_encoded,y_test_encoded = encode_labels(y_train, y_test)
 
-
-    
-
-    
-    
