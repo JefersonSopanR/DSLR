@@ -16,19 +16,23 @@ if __name__ == "__main__":
     num_features = len(feature_cols)
     
     # Create grid of subplots
+    # fig = The whole figure (the entire window/image)
+    # axes = A 2D array (matrix) of individual plot areas
+    # num_features x num_features = Grid dimensions (e.g., 4×4 = 16 plots)
+    # figsize=(20, 20) = Size in inches (20 inches wide × 20 inches tall)
     fig, axes = plt.subplots(num_features, num_features, figsize=(20, 20))
     
     for i, col_i in enumerate(feature_cols):
         for j, col_j in enumerate(feature_cols):
             ax = axes[i, j]
             
-            if i == j:  # Diagonal: histogram
+            if i == j:  # Diagonal: histogram (when row == column):
                 for house in numpy.unique(houses):
                     house_data = numpy.array(data[houses == house][:, col_i], dtype=float)
                     house_data = house_data[~numpy.isnan(house_data)]
                     ax.hist(house_data, alpha=0.5, label=house, 
                            color=house_colors.get(house, 'gray'), bins=20)
-            else:  # Off-diagonal: scatter plot
+            else:  # Off-diagonal: scatter plot (when row != column):
                 for house in numpy.unique(houses):
                     house_mask = houses == house
                     x = numpy.array(data[house_mask][:, col_j], dtype=float)
@@ -42,11 +46,13 @@ if __name__ == "__main__":
             if i == num_features - 1:  # Last row
                 ax.set_xlabel(headers[col_j], fontsize=8)
             else:
+                # This HIDES the numbers/labels on the bottom X-axis
                 ax.tick_params(labelbottom=False)
                 
             if j == 0:  # First column
                 ax.set_ylabel(headers[col_i], fontsize=8)
             else:
+                # This HIDES the numbers/labels on the bottom Y-axis
                 ax.tick_params(labelleft=False)
             
             # Remove top and right spines

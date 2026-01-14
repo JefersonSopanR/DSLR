@@ -1,5 +1,5 @@
-from DSLR.describe_ import stdDev_, mean_
-from DSLR.core import getNumPyArray
+from Helpers.describe_ import stdDev_, mean_
+from Helpers.core import getNumPyArray
 import numpy
 import matplotlib.pyplot as plt
 
