@@ -88,7 +88,6 @@ def gradient_descent(x, y, learning_rate, iterations, weights):
         if i % 100 == 0:
             cost = compute_cost(x, y, weights)
             cost_history.append(cost)
-
     return weights, cost_history
 
     
@@ -108,6 +107,7 @@ def train_one_vs_all(x_train_scaled, y_train_encoded, n_classes, learning_rate=0
         all_weights.append(weights)
         print(f"Final cost: {cost_history[-1]:.6f}")
 
+    print(all_weights)
     return np.array(all_weights)
 
 if __name__ == '__main__':
