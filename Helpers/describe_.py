@@ -13,6 +13,15 @@ def describe(filename):
     percentil75 = []
     max = []
 
+    # bonus
+    ranges = []
+    iqr = []
+    skewness = []
+    kurtosis = []
+    coef_variation = []
+
+
+
     data = data[1:, :]
 
     for i in range(len(headers)):
@@ -29,6 +38,13 @@ def describe(filename):
             percentil50.append(percentil_(50, values))
             percentil75.append(percentil_(75, values))
             max.append(max_(values))
+
+            # bonus
+            ranges.append(range_(values))
+            iqr.append(iqr_(values))
+            skewness.append(skewness_(values))
+            kurtosis.append(kurtosis_(values))
+            coef_variation.append(coef_variation_(values))
         except:
             pass
 
@@ -52,6 +68,11 @@ def describe(filename):
     print_('50%', percentil50)
     print_('75%', percentil75)
     print_('Max', max)
+    print_('range', ranges)
+    print_('iqr', iqr)
+    print_('skewness', skewness)
+    print_('kurtosis', kurtosis)
+    print_('coef_variation', coef_variation)
 
 def print_(label, list):
     print(f'{label:10.10}', end=' | ')
@@ -125,6 +146,69 @@ def var_(values):
     total = 0
     for num in values:
         diff = num - mean
-        total = diff ** 2
+        total += diff ** 2
     return total / len(values)
 
+# bonus
+def range_(values):
+    return max_(values) - min_(values)
+
+def iqr_(values): #interquartile Range: Q3 - Q1
+    q1 = percentil_(25, values)
+    q3 = percentil_(75, values)
+    return q3 - q1
+
+def skewness_(values): # Skewness: measure of asymmetry of distribution
+    values = values.astype('float')
+    values = values[~numpy.isnan(values)]
+    mean = mean_(values)
+    std = stdDev_(values)
+    n = len(values)
+
+    if std == 0:
+        return 0
+
+    total = 0
+    for v in values:
+        diff = v - mean
+        total += diff ** 3
+    
+    return (total/n) / (std ** 3)
+
+# Example: [2, 3, 4, 7, 8, 9, 9, 9, 10, 10, 10, 10]
+           #↑_____↑ (Few low values pulling mean left)
+
+# Example: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+         #(Balanced on both sides)
+
+# Example: [1, 1, 1, 1, 2, 2, 3, 4, 7, 10]
+                              #↑_____↑ (Few high values pulling mean right)
+
+def kurtosis_(values):
+    values = values.astype('float')
+    values = values[~numpy.isnan(values)]
+    mean = mean_(values)
+    std = stdDev_(values)
+    n = len(values)
+
+    if std == 0:
+        return 0
+    
+    total = 0
+
+    for v in values:
+        diff = v - mean
+        total += diff ** 4
+    
+    return (total/n) / (std ** 4) - 3
+
+def coef_variation_(values):
+    """Coefficient of Variation: (std/mean) * 100"""
+    values = values.astype('float')
+    values = values[~numpy.isnan(values)]
+    mean = mean_(values)
+    
+    if mean == 0:
+        return 0
+    
+    return (stdDev_(values) / mean) * 100
