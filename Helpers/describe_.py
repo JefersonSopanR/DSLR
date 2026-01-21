@@ -157,6 +157,8 @@ def iqr_(values): #interquartile Range: Q3 - Q1
     q1 = percentil_(25, values)
     q3 = percentil_(75, values)
     return q3 - q1
+#"IQR shows the range where the middle half of people scored.
+# It ignores the top 25% and bottom 25%, so extreme scores don't mess up the picture."
 
 def skewness_(values): # Skewness: measure of asymmetry of distribution
     values = values.astype('float')
@@ -202,13 +204,38 @@ def kurtosis_(values):
     
     return (total/n) / (std ** 4) - 3
 
+# UNIFORM (Kurtosis < 0)
+ #[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  → Kurtosis ≈ -1.2
+  #**********
+
+# NORMAL-ISH (Kurtosis ≈ 0)
+#[3, 4, 5, 5, 5, 5, 6, 6, 7]      → Kurtosis ≈ 0
+#*****
+
+# PEAKED (Kurtosis > 0)
+#[5, 5, 5, 5, 5, 5, 5, 1, 10]     → Kurtosis > 0
+
 def coef_variation_(values):
     """Coefficient of Variation: (std/mean) * 100"""
     values = values.astype('float')
     values = values[~numpy.isnan(values)]
     mean = mean_(values)
+    std = stdDev_(values)
     
-    if mean == 0:
+    if mean == 0 or std == 0:
         return 0
-    
-    return (stdDev_(values) / mean) * 100
+
+    return (std / mean) * 100
+
+#CV < 15%   →  Low variability    (very consistent)
+     #****
+    #******
+
+#CV 15-30%  →  Moderate           (normal variation)
+   #********
+
+#CV > 30%   →  High variability   (inconsistent/risky)
+#*     *     *
+
+#CV > 100%  →  Extreme!            (std > mean)
+#*               *
